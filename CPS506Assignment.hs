@@ -80,4 +80,11 @@ module Poker where
             else if (head reducedHand) == 1
                 then 14
                 else last hand
+
+    checkStraightFlush::[Integer]->Bool
+    checkStraightFlush hand=if isInSequence(hand) && checkFlush(hand) then True else False
+
+    checkStraight::[Integer]->Bool
+    checkStraight hand=if isInSequence(hand) then True else False
+
         
