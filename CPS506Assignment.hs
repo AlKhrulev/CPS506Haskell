@@ -16,9 +16,23 @@
 --High Card:When you haven't made any of the hands above, the highest card plays. 
 
 module Poker where
-    deal::[Integer]->[Char] --the method that executes other methods
-    deal list=['a','b','c']
-
+    -- deal::[Integer]->[Char] --the method that executes other methods
+    deal list = distribute list [] []
+    
+    -- right now they have nowhere else to go so i just put the hands together
+    distribute [x, y] hand1 hand2 = do
+        let head1 = x
+        let head2 = y
+        let fhand = hand1 ++ [head1]
+        let shand = hand2 ++ [head2]
+        fhand ++ shand
+    distribute list hand1 hand2 = do
+        let head1 = head list
+        let head2 = head (tail list)
+        let fhand = hand1 ++ [head1]
+        let shand = hand2 ++ [head2]
+        let listTail = tail(tail list)
+        distribute listTail fhand shand
 
     retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
     retrieveCardValue value
@@ -75,9 +89,27 @@ module Poker where
 
     getHighCard hand = do
         let reducedHand = map (\x -> x `mod` 13) hand
-        if (head reducedHand) == 0
-            then 13
-            else if (head reducedHand) == 1
-                then 14
-                else last hand
-        
+        if (isInSequence reducedHand) && (head reducedHand) == 1
+            then last reducedHand
+            else if (head reducedHand) == 0
+                then 13
+                else if (head reducedHand) == 1
+                    then 14
+                    else last reducedHand
+    
+    getOnePair hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        if any (2==) frequencyHand
+            then "Has Pair"
+            else "No Pair"
+
+    getTwoPair hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        if any (2==) frequencyHand
+            then "Has Two Pair"
+            else "No Two Pair"
+
+    getFrequency _ [] = 0
+    getFrequency x list = (length.filter(== x)) list
