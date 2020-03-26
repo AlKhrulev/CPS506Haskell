@@ -14,6 +14,7 @@
 --Two pairs:Two different pairs. 
 --Pair:Two cards of the same rank.
 --High Card:When you haven't made any of the hands above, the highest card plays. 
+
 module Poker where
     deal::[Integer]->[Char] --the method that executes other methods
     deal list=['a','b','c']
@@ -70,3 +71,13 @@ module Poker where
         let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
         if all(\card -> determineSuitValueHelper(card)==reference_suit) hand 
             then True else False
+
+
+    getHighCard hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        if (head reducedHand) == 0
+            then 13
+            else if (head reducedHand) == 1
+                then 14
+                else last hand
+        
