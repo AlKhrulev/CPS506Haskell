@@ -58,11 +58,12 @@ module Poker where
             then True else False
 
 
-    checkRoyalFlush::[Integer]->[Char]
+    checkRoyalFlush::[Integer]->Bool
     checkRoyalFlush hand=do
         let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
-        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand
-            then "the same suits" else "different suits" --TODO finish
+        let reducedHand=map (retrieveCardValue) hand
+        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand && reducedHand==[1,10,11,12,13]
+            then True else False
 
 
     checkFlush::[Integer]->Bool
@@ -70,3 +71,13 @@ module Poker where
         let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
         if all(\card -> determineSuitValueHelper(card)==reference_suit) hand 
             then True else False
+
+    getHighCard::[Integer]->Integer
+    getHighCard hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        if (head reducedHand) == 0
+            then 13
+            else if (head reducedHand) == 1
+                then 14
+                else last hand
+        
