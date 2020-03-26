@@ -100,16 +100,20 @@ module Poker where
     getOnePair hand = do
         let reducedHand = map (\x -> x `mod` 13) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
-        if any (2==) frequencyHand
-            then "Has Pair"
-            else "No Pair"
+        let zipped = zip hand frequencyHand
+        let pair = filter (\x -> snd x == 2) zipped
+        fst (head pair)
 
     getTwoPair hand = do
         let reducedHand = map (\x -> x `mod` 13) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
-        if any (2==) frequencyHand
-            then "Has Two Pair"
-            else "No Two Pair"
+        let zipped = zip hand frequencyHand
+        let pairs = filter (\x -> snd x == 2) zipped
+        if fst (head pairs) == 1
+            then
+                fst (head pairs)
+            else
+                fst (last pairs)
 
     getFrequency _ [] = 0
     getFrequency x list = (length.filter(== x)) list
