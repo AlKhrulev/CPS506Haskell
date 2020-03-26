@@ -9,7 +9,7 @@
 --Four of a kind:All four cards of the same rank. 
 --Full house: Three of a kind with a pair. 
 --Flush:Any five cards of the same suit, but not in a sequence. 
---Straight:Five cards in a sequence, but not of the same suit. 
+--Straight:Five cards in a sequence, but not of the same suit. (isInSequence and a Flush)
 --Three of a Kind:Three cards of the same rank.
 --Two pairs:Two different pairs. 
 --Pair:Two cards of the same rank.
@@ -39,15 +39,34 @@ module Poker where
         |value<=39=(value,'H')
         |value<=52=(value,'S')
 
+    determineSuitValueHelper::Integer->Integer --determines the suit of 1 card and returns a value
+    determineSuitValueHelper value
+        |value<=13=1
+        |value<=26=2
+        |value<=39=3
+        |value<=52=4
+
     determineSuit::[Integer]->[(Integer,Char)] --determines the suit of the whole hand
     determineSuit hand=map (determineSuitHelper) hand
 
-    --checkRoyalFlush::[(Integer,Char)]->Bool
-    --checkRoyalFlush hand=do
-        --let reference_suit=snd (head(hand)) --retrieves a first suit
-        --let suitsList=retrieveSuitsList([],hand)
-        --if (foldr (==) reference_suit suitsList) --this part doesn't work yet!
-            --then "Works!"
+    isInSequence::[Integer]->Bool
+    isInSequence hand=do--determines if the cards in the hand are in sequence
+        let reducedHand=map (\x -> (x-1) `mod` 13) hand
+        let headRHand=(head reducedHand)
+        let newList=map (\x -> x + headRHand) [0,1,2,3,4]
+        if newList==reducedHand
+            then True else False
 
 
---remainder of card_number/13 gives you a suit
+    checkRoyalFlush::[Integer]->[Char]
+    checkRoyalFlush hand=do
+        let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
+        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand
+            then "the same suits" else "different suits" --TODO finish
+
+
+    checkFlush::[Integer]->Bool
+    checkFlush hand=do
+        let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
+        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand 
+            then True else False
