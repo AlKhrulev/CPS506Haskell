@@ -102,18 +102,25 @@ module Poker where
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         let zipped = zip hand frequencyHand
         let pair = filter (\x -> snd x == 2) zipped
-        fst (head pair)
+        if length pair == 2
+            then True
+            else False
+        -- pair
+        -- fst (head pair)
 
     getTwoPair hand = do
         let reducedHand = map (\x -> x `mod` 13) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         let zipped = zip hand frequencyHand
         let pairs = filter (\x -> snd x == 2) zipped
-        if fst (head pairs) == 1
-            then
-                fst (head pairs)
-            else
-                fst (last pairs)
+        if length pairs == 4
+            then True
+            else False
+        -- if fst (head pairs) == 1
+        --     then
+        --         fst (head pairs)
+        --     else
+        --         fst (last pairs)
 
     getFrequency _ [] = 0
     getFrequency x list = (length.filter(== x)) list
