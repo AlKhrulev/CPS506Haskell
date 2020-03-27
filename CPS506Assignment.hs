@@ -4,19 +4,34 @@
 --Royal Flush>Straigh Flush>Four of a Kind>Full House>Flush>Straight>Three of a kind>Two pair>
 --Pair>High Card
 
---Royal Flush:A, K, Q, J, 10, all the same suit. 
---Straight Flush:Five cards in a sequence, all in the same suit. 
---Four of a kind:All four cards of the same rank. 
---Full house: Three of a kind with a pair. 
---Flush:Any five cards of the same suit, but not in a sequence. 
---Straight:Five cards in a sequence, but not of the same suit. (isInSequence and a Flush)
---Three of a Kind:Three cards of the same rank.
---Two pairs:Two different pairs. 
---Pair:Two cards of the same rank.
---High Card:When you haven't made any of the hands above, the highest card plays. 
+--Royal Flush:A, K, Q, J, 10, all the same suit. DONE
+--Straight Flush:Five cards in a sequence, all in the same suit. DONE
+--Four of a kind:All four cards of the same rank. DONE
+--Full house: Three of a kind with a pair. DONE
+--Flush:Any five cards of the same suit, but not in a sequence. DONE
+--Straight:Five cards in a sequence, but not of the same suit. (isInSequence and a Flush) DONE
+--Three of a Kind:Three cards of the same rank. DONE
+--Two pairs:Two different pairs.  DONE
+--Pair:Two cards of the same rank. DONE
+--High Card:When you haven't made any of the hands above, the highest card plays. DONE
 module Poker where
-    deal::[Integer]->[Char] --the method that executes other methods
-    deal list=['a','b','c']
+    -- deal::[Integer]->[Char] --the method that executes other methods
+    deal list = distribute list [] []
+    
+    -- right now they have nowhere else to go so i just put the hands together
+    distribute [x, y] hand1 hand2 = do
+        let head1 = x
+        let head2 = y
+        let fhand = hand1 ++ [head1]
+        let shand = hand2 ++ [head2]
+        fhand ++ shand
+    distribute list hand1 hand2 = do
+        let head1 = head list
+        let head2 = head (tail list)
+        let fhand = hand1 ++ [head1]
+        let shand = hand2 ++ [head2]
+        let listTail = tail(tail list)
+        distribute listTail fhand shand
 
 
     retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
@@ -86,5 +101,50 @@ module Poker where
 
     checkStraight::[Integer]->Bool
     checkStraight hand=if isInSequence(hand) then True else False
+
+    --returns a # of times element is present in a list
+    getFrequency _ [] = 0
+    getFrequency x list = (length.filter(== x)) list
+
+    checkFourofAKind::[Integer]->Bool
+    checkFourofAKind hand=do
+        let reducedHand = map (retrieveCardValue) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        if any (4==) frequencyHand then True else False
+
+
+    checkThreeofAKind::[Integer]->Bool
+    checkThreeofAKind hand=do --if there are 3 equal cards and not a Fullhouse
+        let reducedHand = map (retrieveCardValue) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        if (any (3==) frequencyHand) && not (checkFullhouse hand) then True else False
+
+
+    checkFullhouse::[Integer]->Bool
+    checkFullhouse hand=do
+        let reducedHand = map (retrieveCardValue) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        if (any (3==) frequencyHand) && (any (2==) frequencyHand) then True else False
+
+
+    getOnePair hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let pair = filter (\x -> snd x == 2) zipped
+        if length pair == 2
+            then True
+            else False
+        -- pair
+        -- fst (head pair)
+
+    getTwoPair hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let pairs = filter (\x -> snd x == 2) zipped
+        if length pairs == 4
+            then True
+            else False
 
         
