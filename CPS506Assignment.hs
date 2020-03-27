@@ -36,6 +36,17 @@ module Poker where
         let listTail = tail(tail list)
         distribute listTail fhand shand
 
+    convert hand = do
+        -- list of tuples, each tuple has a number mapped to a suit
+        -- the division of the card value (42, 30, etc) by 13 will result in its suit
+        let suits = [(0, "C"), (1, "D"), (2, "H"), (3, "S")]
+        -- list of characters in order of the way they correspond to their value mod 13
+        -- 13 mod 13 = 0, so king is at start of list, etc
+        let values = ["13", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+        -- concatenates the value and suit into one string and maps it to a converted hand
+        let converted = map (\x -> ( values !! (x `mod` 13) ) ++ (snd ( suits !! ((x-1) `div` 13) )) ) hand
+        converted 
+
     -- HELPER FUNCTIONS --
 
     retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
