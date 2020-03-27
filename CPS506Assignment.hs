@@ -44,7 +44,7 @@ module Poker where
         let head2 = y
         let fhand = hand1 ++ [head1]
         let shand = hand2 ++ [head2]
-        fhand ++ shand
+        (fhand, shand)
     distribute list hand1 hand2 = do
         let head1 = head list
         let head2 = head (tail list)
