@@ -76,7 +76,8 @@ module Poker where
         |getHighCard(hand1)>getHighCard(hand2)=hand1
         |getHighCard(hand2)>getHighCard(hand1)=hand2
         |determineSuitValueHelper(getHighCard(hand1))>determineSuitValueHelper(getHighCard(hand2))=hand1
-        |determineSuitValueHelper(getHighCard(hand2))>determineSuitValueHelper(getHighCard(hand1))=hand2
+        |otherwise=hand2
+        --determineSuitValueHelper(getHighCard(hand2))>determineSuitValueHelper(getHighCard(hand1))=hand2
     -- HELPER FUNCTIONS --
 
     --retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
