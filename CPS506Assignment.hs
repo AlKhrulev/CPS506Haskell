@@ -19,7 +19,24 @@ module Poker where
     -- MAIN COMPONENTS TO GAME --
 
     -- deal::[Integer]->[Char] --the method that executes other methods
-    deal list = distribute list [] []
+    deal list =do
+        distribute list [] []
+        let hand1=[1,2,3,4,5]--temporary assign
+        let hand2=[14,15,16,17,18]  --temporary assign
+        let rank1=determineRank(hand1)
+        let rank2=determineRank(hand2)
+        let highcard1=getHighCard(hand1)
+        let highcard2=getHighCard(hand2)
+        let suitRank1=determineSuitValueHelper(highcard1)
+        let suitRank2=determineSuitValueHelper(highcard2)
+        if rank1>rank2 then convert(hand1) else if rank2>rank1 then convert(hand2) else
+                if highcard1>highcard2 then convert(hand1) else if highcard1<highcard2 then
+                    convert(hand2) else
+                        if suitRank1>suitRank2 then convert(hand1) else convert(hand2)
+
+
+
+
     
     -- right now they have nowhere else to go so i just put the hands together
     distribute [x, y] hand1 hand2 = do
@@ -47,9 +64,23 @@ module Poker where
         let converted = map (\x -> ( values !! (x `mod` 13) ) ++ (snd ( suits !! ((x-1) `div` 13) )) ) hand
         converted 
 
+    --determineRank::[Integer]->Integer
+    determineRank hand --determines the rank of the hand
+        |checkRoyalFlush(hand)=10
+        |checkStraightFlush(hand)=9
+        |checkFourofAKind(hand)=8
+        |checkFullhouse(hand)=7
+        |checkFlush(hand)=6
+        |checkStraight(hand)=5
+        |checkThreeofAKind(hand)=4
+        |getTwoPair(hand)=3
+        |getOnePair(hand)=2
+        |otherwise=1 --basically the case of the high card
+
+
     -- HELPER FUNCTIONS --
 
-    retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
+    --retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
     retrieveCardValue value
         |value<=13=value
         |otherwise=retrieveCardValue (value-13)
@@ -62,24 +93,24 @@ module Poker where
             retrieveSuitsList newAcc (tail(list))
 
 
-    determineSuitHelper::Integer->(Integer,Char) --determines the suit of 1 card and returns a tuple
+    --determineSuitHelper::Integer->(Integer,Char) --determines the suit of 1 card and returns a tuple
     determineSuitHelper value
         |value<=13=(value,'C')
         |value<=26=(value,'D')
         |value<=39=(value,'H')
         |value<=52=(value,'S')
 
-    determineSuitValueHelper::Integer->Integer --determines the suit of 1 card and returns a value
+    --determineSuitValueHelper::Integer->Integer --determines the suit of 1 card and returns a value
     determineSuitValueHelper value
         |value<=13=1
         |value<=26=2
         |value<=39=3
         |value<=52=4
 
-    determineSuit::[Integer]->[(Integer,Char)] --determines the suit of the whole hand
+    --determineSuit::[Integer]->[(Integer,Char)] --determines the suit of the whole hand
     determineSuit hand=map (determineSuitHelper) hand
 
-    isInSequence::[Integer]->Bool
+    --isInSequence::[Integer]->Bool
     isInSequence hand=do--determines if the cards in the hand are in sequence
         let reducedHand=map (\x -> (x-1) `mod` 13) hand
         let headRHand=(head reducedHand)
@@ -93,7 +124,7 @@ module Poker where
 
     -- METHODS TO CHECK RANKING OF HAND --
 
-    getHighCard::[Integer]->Integer
+    --getHighCard::[Integer]->Integer
     getHighCard hand = do
         let reducedHand = map (\x -> x `mod` 13) hand
         if (head reducedHand) == 0
@@ -102,7 +133,7 @@ module Poker where
                 then 14
                 else last hand
 
-    getOnePair::[Integer]->Bool
+    --getOnePair::[Integer]->Bool
     getOnePair hand = do
         let reducedHand = map (\x -> x `mod` 13) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
@@ -110,7 +141,7 @@ module Poker where
         let pair = filter (\x -> snd x == 2) zipped
         length pair == 2
 
-    getTwoPair::[Integer]->Bool
+    --getTwoPair::[Integer]->Bool
     getTwoPair hand = do
         let reducedHand = map (\x -> x `mod` 13) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
@@ -118,37 +149,37 @@ module Poker where
         let pairs = filter (\x -> snd x == 2) zipped
         length pairs == 4
     
-    checkThreeofAKind::[Integer]->Bool
+    --checkThreeofAKind::[Integer]->Bool
     checkThreeofAKind hand=do --if there are 3 equal cards and not a Fullhouse
         let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         if (any (3==) frequencyHand) && not (checkFullhouse hand) then True else False
         
-    checkStraight::[Integer]->Bool
-    checkStraight hand=if isInSequence(hand) then True else False
+    --checkStraight::[Integer]->Bool
+    checkStraight hand=if isInSequence(hand) && not(checkFlush(hand)) then True else False
 
-    checkFlush::[Integer]->Bool
+    --checkFlush::[Integer]->Bool
     checkFlush hand=do
         let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
         if all(\card -> determineSuitValueHelper(card)==reference_suit) hand 
             then True else False
 
-    checkFullhouse::[Integer]->Bool
+    --checkFullhouse::[Integer]->Bool
     checkFullhouse hand=do
         let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         if (any (3==) frequencyHand) && (any (2==) frequencyHand) then True else False
         
-    checkFourofAKind::[Integer]->Bool
+    --checkFourofAKind::[Integer]->Bool
     checkFourofAKind hand=do
         let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         if any (4==) frequencyHand then True else False
 
-    checkStraightFlush::[Integer]->Bool
+    --checkStraightFlush::[Integer]->Bool
     checkStraightFlush hand=if isInSequence(hand) && checkFlush(hand) then True else False
 
-    checkRoyalFlush::[Integer]->Bool
+    --checkRoyalFlush::[Integer]->Bool
     checkRoyalFlush hand=do
         let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
         let reducedHand=map (retrieveCardValue) hand
