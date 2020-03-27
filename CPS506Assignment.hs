@@ -121,6 +121,29 @@ module Poker where
         --         fst (head pairs)
         --     else
         --         fst (last pairs)
+    
+    getThreeKind hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let trips = filter (\x -> snd x == 3) zipped
+        if length trips == 3
+            then True
+            else False
 
-    getFrequency _ [] = 0
+    getFourKind hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let quads = filter (\x -> snd x == 4) zipped
+        if length quads == 4
+            then True
+            else False
+
+    getFullHouse hand = do
+        if getThreeKind hand && getOnePair hand
+            then True
+            else False
+
+    -- getFrequency _ [] = 0
     getFrequency x list = (length.filter(== x)) list
