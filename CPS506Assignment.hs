@@ -15,6 +15,9 @@
 --Pair:Two cards of the same rank. DONE
 --High Card:When you haven't made any of the hands above, the highest card plays. DONE
 module Poker where
+
+    -- MAIN COMPONENTS TO GAME --
+
     -- deal::[Integer]->[Char] --the method that executes other methods
     deal list = distribute list [] []
     
@@ -33,6 +36,7 @@ module Poker where
         let listTail = tail(tail list)
         distribute listTail fhand shand
 
+    -- HELPER FUNCTIONS --
 
     retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
     retrieveCardValue value
@@ -73,20 +77,10 @@ module Poker where
         if newList==reducedHand || specialCase==reducedHand
             then True else False
 
+    --returns a # of times element is present in a list
+    getFrequency x list = (length.filter(== x)) list
 
-    checkRoyalFlush::[Integer]->Bool
-    checkRoyalFlush hand=do
-        let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
-        let reducedHand=map (retrieveCardValue) hand
-        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand && reducedHand==[1,10,11,12,13]
-            then True else False
-
-
-    checkFlush::[Integer]->Bool
-    checkFlush hand=do
-        let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
-        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand 
-            then True else False
+    -- METHODS TO CHECK RANKING OF HAND --
 
     getHighCard::[Integer]->Integer
     getHighCard hand = do
@@ -97,55 +91,55 @@ module Poker where
                 then 14
                 else last hand
 
-    checkStraightFlush::[Integer]->Bool
-    checkStraightFlush hand=if isInSequence(hand) && checkFlush(hand) then True else False
-
-    checkStraight::[Integer]->Bool
-    checkStraight hand=if isInSequence(hand) then True else False
-
-    --returns a # of times element is present in a list
-    getFrequency _ [] = 0
-    getFrequency x list = (length.filter(== x)) list
-
-    checkFourofAKind::[Integer]->Bool
-    checkFourofAKind hand=do
-        let reducedHand = map (retrieveCardValue) hand
+    getOnePair::[Integer]->Bool
+    getOnePair hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
-        if any (4==) frequencyHand then True else False
+        let zipped = zip hand frequencyHand
+        let pair = filter (\x -> snd x == 2) zipped
+        length pair == 2
 
-
+    getTwoPair::[Integer]->Bool
+    getTwoPair hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let pairs = filter (\x -> snd x == 2) zipped
+        length pairs == 4
+    
     checkThreeofAKind::[Integer]->Bool
     checkThreeofAKind hand=do --if there are 3 equal cards and not a Fullhouse
         let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         if (any (3==) frequencyHand) && not (checkFullhouse hand) then True else False
+        
+    checkStraight::[Integer]->Bool
+    checkStraight hand=if isInSequence(hand) then True else False
 
+    checkFlush::[Integer]->Bool
+    checkFlush hand=do
+        let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
+        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand 
+            then True else False
 
     checkFullhouse::[Integer]->Bool
     checkFullhouse hand=do
         let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         if (any (3==) frequencyHand) && (any (2==) frequencyHand) then True else False
-
-
-    getOnePair hand = do
-        let reducedHand = map (\x -> x `mod` 13) hand
-        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
-        let zipped = zip hand frequencyHand
-        let pair = filter (\x -> snd x == 2) zipped
-        if length pair == 2
-            then True
-            else False
-        -- pair
-        -- fst (head pair)
-
-    getTwoPair hand = do
-        let reducedHand = map (\x -> x `mod` 13) hand
-        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
-        let zipped = zip hand frequencyHand
-        let pairs = filter (\x -> snd x == 2) zipped
-        if length pairs == 4
-            then True
-            else False
-
         
+    checkFourofAKind::[Integer]->Bool
+    checkFourofAKind hand=do
+        let reducedHand = map (retrieveCardValue) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        if any (4==) frequencyHand then True else False
+
+    checkStraightFlush::[Integer]->Bool
+    checkStraightFlush hand=if isInSequence(hand) && checkFlush(hand) then True else False
+
+    checkRoyalFlush::[Integer]->Bool
+    checkRoyalFlush hand=do
+        let reference_suit=determineSuitValueHelper (head hand) --retrieves a first suit
+        let reducedHand=map (retrieveCardValue) hand
+        if all(\card -> determineSuitValueHelper(card)==reference_suit) hand && reducedHand==[1,10,11,12,13]
+            then True else False
