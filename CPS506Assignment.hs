@@ -23,16 +23,8 @@ module Poker where
         distribute list [] []
         let hand1=[1,2,3,4,5]--temporary assign
         let hand2=[14,15,16,17,18]  --temporary assign
-        let rank1=determineRank(hand1)
-        let rank2=determineRank(hand2)
-        let highcard1=getHighCard(hand1)
-        let highcard2=getHighCard(hand2)
-        let suitRank1=determineSuitValueHelper(highcard1)
-        let suitRank2=determineSuitValueHelper(highcard2)
-        if rank1>rank2 then convert(hand1) else if rank2>rank1 then convert(hand2) else
-                if highcard1>highcard2 then convert(hand1) else if highcard1<highcard2 then
-                    convert(hand2) else
-                        if suitRank1>suitRank2 then convert(hand1) else convert(hand2)
+        let winner=determineWinner hand1 hand2
+        --print winner here
 
 
 
@@ -78,6 +70,13 @@ module Poker where
         |otherwise=1 --basically the case of the high card
 
 
+    determineWinner hand1 hand2 --determines the winner
+        |determineRank(hand1)>determineRank(hand2)=hand1
+        |determineRank(hand1)<determineRank(hand2)=hand2
+        |getHighCard(hand1)>getHighCard(hand2)=hand1
+        |getHighCard(hand2)>getHighCard(hand1)=hand2
+        |determineSuitValueHelper(getHighCard(hand1))>determineSuitValueHelper(getHighCard(hand2))=hand1
+        |determineSuitValueHelper(getHighCard(hand2))>determineSuitValueHelper(getHighCard(hand1))=hand2
     -- HELPER FUNCTIONS --
 
     --retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
