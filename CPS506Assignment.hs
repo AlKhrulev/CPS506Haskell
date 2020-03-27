@@ -20,15 +20,12 @@ module Poker where
 
     -- deal::[Integer]->[Char] --the method that executes other methods
     deal list =do
-        distribute list [] []
-        let hand1=[1,2,3,4,5]--temporary assign
-        let hand2=[14,15,16,17,18]  --temporary assign
-        let winner=determineWinner hand1 hand2
-        --print winner here
-
-
-
-
+        let hands = distribute list [] []
+        -- let sortedHands = sort hands
+        -- let hand1=[1,2,3,4,5]--temporary assign
+        -- let hand2=[14,15,16,17,18]  --temporary assign
+        let winner=determineWinner (fst hands) (snd hands)
+        convert winner
     
     -- right now they have nowhere else to go so i just put the hands together
     distribute [x, y] hand1 hand2 = do
@@ -44,6 +41,11 @@ module Poker where
         let shand = hand2 ++ [head2]
         let listTail = tail(tail list)
         distribute listTail fhand shand
+
+    -- sort hands = do
+    --     let hand1 = fst hands
+    --     let hand2 = snd hands
+    --     let sortedHand1
 
     convert hand = do
         -- list of tuples, each tuple has a number mapped to a suit
@@ -77,6 +79,8 @@ module Poker where
         |getHighCard(hand2)>getHighCard(hand1)=hand2
         |determineSuitValueHelper(getHighCard(hand1))>determineSuitValueHelper(getHighCard(hand2))=hand1
         |determineSuitValueHelper(getHighCard(hand2))>determineSuitValueHelper(getHighCard(hand1))=hand2
+        -- we need to do a sorting method, so far we've assumed the hands are sorted
+
     -- HELPER FUNCTIONS --
 
     --retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
