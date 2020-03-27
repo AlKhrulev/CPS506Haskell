@@ -69,7 +69,8 @@ module Poker where
         let reducedHand=map (\x -> (x-1) `mod` 13) hand
         let headRHand=(head reducedHand)
         let newList=map (\x -> x + headRHand) [0,1,2,3,4]
-        if newList==reducedHand
+        let specialCase = [0,9,10,11,12]
+        if newList==reducedHand || specialCase==reducedHand
             then True else False
 
 
