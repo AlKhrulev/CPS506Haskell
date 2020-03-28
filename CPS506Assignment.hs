@@ -60,7 +60,7 @@ module Poker where
         let values = ["13", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
         -- concatenates the value and suit into one string and maps it to a converted hand
         let converted = map (\x -> ( values !! (x `mod` 13) ) ++ (snd ( suits !! ((x-1) `div` 13) )) ) hand
-        converted 
+        (sort converted) --sort in terms of ascii and return the result
 
     --determineRank::[Integer]->Integer
     determineRank hand --determines the rank of the hand
