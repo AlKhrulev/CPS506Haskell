@@ -81,7 +81,7 @@ module Poker where
         |determineRank(hand1)<determineRank(hand2)=hand2
         |getHighCard(hand1)>getHighCard(hand2)=hand1
         |getHighCard(hand2)>getHighCard(hand1)=hand2
-        |determineSuitValueHelper(getHighCardValue(hand1))>determineSuitValueHelper(getHighCard(hand2))=hand1
+        |determineSuitValueHelper(getHighCardValue(hand1))>determineSuitValueHelper(getHighCardValue(hand2))=hand1
         |otherwise=hand2
         --determineSuitValueHelper(getHighCard(hand2))>determineSuitValueHelper(getHighCard(hand1))=hand2
     -- HELPER FUNCTIONS --
@@ -141,6 +141,11 @@ module Poker where
         -- if (head reducedHand) == 0
         --     then 13
         --     else last reducedHand
+        
+    getHighCardFixed hand = do
+        let reducedHand = sort (map (retrieveCardValue) hand)
+        if reducedHand==[1,2,3,4,5] then 5 else if reducedHand==[1,10,11,12,13] then 13 
+            else if head(reducedHand)==1 then 14 else last(reducedHand)
 
     getHighCardValue hand = do
         let reducedHand = map (\x -> (x-1) `mod` 13) hand
