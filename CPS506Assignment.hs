@@ -14,17 +14,18 @@
 --Two pairs:Two different pairs.  DONE
 --Pair:Two cards of the same rank. DONE
 --High Card:When you haven't made any of the hands above, the highest card plays. DONE
+
 module Poker where
+    import Data.List
 
     -- MAIN COMPONENTS TO GAME --
 
     -- deal::[Integer]->[Char] --the method that executes other methods
     deal list =do
         let hands = distribute list [] []
-        -- let sortedHands = sort hands
-        -- let hand1=[1,2,3,4,5]--temporary assign
-        -- let hand2=[14,15,16,17,18]  --temporary assign
-        let winner=determineWinner (fst hands) (snd hands)
+        let sortedHand1 = sort (fst hands)
+        let sortedHand2 = sort (snd hands)
+        let winner=determineWinner sortedHand1 sortedHand2
         convert winner
     
     -- right now they have nowhere else to go so i just put the hands together
@@ -42,10 +43,13 @@ module Poker where
         let listTail = tail(tail list)
         distribute listTail fhand shand
 
-    -- sort hands = do
-    --     let hand1 = fst hands
-    --     let hand2 = snd hands
-    --     let sortedHand1
+    sortHand hand = do
+        let splitFunc = (\x -> x `rem` 13 == 0)
+        let sortedHand = sortBy (\x y -> compare ((x-1) `mod` 13) ((y-1) `mod` 13)) hand
+        let kings = takeWhile (\x -> x `rem` 13 == 0)
+        let nonKings = dropWhile (\x -> x `rem` 13 == 0)
+        sortedHand
+        
 
     convert hand = do
         -- list of tuples, each tuple has a number mapped to a suit
@@ -128,20 +132,23 @@ module Poker where
 
     --getHighCard::[Integer]->Integer
     getHighCard hand = do
-        let reducedHand = map (\x -> x `mod` 13) hand
-        if (head reducedHand) == 0
-            then 13
-            else if (head reducedHand) == 1
-                then 14
-                else last reducedHand
+        let reducedHand = map (\x -> (x-1) `mod` 13) hand
+        if (head reducedHand) /= 0
+            then (last reducedHand) + 1
+            else if (isInSequence hand) && (last reducedHand) /= 12
+                then (last reducedHand) + 1
+                else 14
+        -- if (head reducedHand) == 0
+        --     then 13
+        --     else last reducedHand
 
     getHighCardValue hand = do
         let reducedHand = map (\x -> (x-1) `mod` 13) hand
-        if (head reducedHand) == 0
-            then
-                head hand
-            else
-                last hand
+        if (head reducedHand) /= 0
+            then last hand
+            else if (isInSequence hand) && (last reducedHand) /= 12
+                then last hand
+                else head hand
 
     --getOnePair::[Integer]->Bool
     getOnePair hand = do
