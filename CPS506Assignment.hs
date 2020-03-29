@@ -155,6 +155,23 @@ module Poker where
         let pairs = filter (\x -> snd x == 2) zipped
         (fst (head pairs), fst (last pairs))
 
+    --get high card three kind
+    getThreeKindValue hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let trips = filter (\x -> snd x == 3) zipped
+        fst (head trips)
+        
+    --get high card four kind
+    getFourKindValue hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let quads = filter (\x -> snd x == 4) zipped
+        fst (head quads)
+
+
     -- METHODS TO CHECK RANKING OF HAND --
 
     --getHighCard::[Integer]->Integer
