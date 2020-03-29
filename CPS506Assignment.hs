@@ -79,6 +79,11 @@ module Poker where
     determineWinner hand1 hand2 --determines the winner
         |determineRank(hand1)>determineRank(hand2)=hand1
         |determineRank(hand1)<determineRank(hand2)=hand2
+        |determineRank(hand1)==8=(tieBreakerFourofaKind hand1 hand2) --added from here
+        |determineRank(hand1)==7=(tieBreakerFullhouse hand1 hand2)
+        |determineRank(hand1)==4=(tieBreakerThreeofaKind hand1 hand2)
+        |determineRank(hand1)==3=(tieBreakerTwoPairs hand1 hand2)
+        |determineRank(hand1)==2=(tieBreakerOnePair hand1 hand2) --to here
         |getHighCard(hand1)>getHighCard(hand2)=hand1
         |getHighCard(hand2)>getHighCard(hand1)=hand2
         |determineSuitValueHelper(getHighCardValue(hand1))>determineSuitValueHelper(getHighCardValue(hand2))=hand1
