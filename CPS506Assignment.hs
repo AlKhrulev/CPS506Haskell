@@ -23,8 +23,8 @@ module Poker where
     -- deal::[Integer]->[Char] --the method that executes other methods
     deal list =do
         let hands = distribute list [] []
-        let sortedHand1 = sort (fst hands)
-        let sortedHand2 = sort (snd hands)
+        let sortedHand1 = sortHand (fst hands)
+        let sortedHand2 = sortHand (snd hands)
         let winner=determineWinner sortedHand1 sortedHand2
         convert winner
     
