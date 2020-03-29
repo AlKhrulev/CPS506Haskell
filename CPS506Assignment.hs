@@ -84,6 +84,18 @@ module Poker where
         |determineSuitValueHelper(getHighCardValue(hand1))>determineSuitValueHelper(getHighCardValue(hand2))=hand1
         |otherwise=hand2
         --determineSuitValueHelper(getHighCard(hand2))>determineSuitValueHelper(getHighCard(hand1))=hand2
+    
+    tieBreakerTwoPairs hand1 hand2=do
+        let reducedHand1 = map (retrieveCardValue) reducedHand1
+        let reducedHand2 = map (retrieveCardValue) reducedHand2
+        let pairvalues1=[1,1,1,1]
+        let pairvalues2=[1,1,1,1]
+        if (head reducedHand1)==(head tail reducedHand1) then 
+            pairvalues1=(take 4 reducedHand1) else pairvalues1=(tail reducedHand1)
+        if (head reducedHand2)==(head tail reducedHand2) then 
+            pairvalues2=(take 4 reducedHand2) else pairvalues2=(tail reducedHand2)
+        
+
     -- HELPER FUNCTIONS --
 
     --retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
