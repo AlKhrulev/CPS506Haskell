@@ -102,13 +102,28 @@ module Poker where
                             then hand1
                                 else if determineSuitValueHelper(snd pairs2)>determineSuitValueHelper(snd pairs1)
                                 then hand2
-                                else tieBreakerTwoPairsHelper hand1 hand2
+                                else tieBreakerPairsHelper hand1 hand2
 
-    tieBreakerTwoPairsHelper hand1 hand2
+    tieBreakerPairsHelper hand1 hand2
         |getHighCard(hand1)>getHighCard(hand2)=hand1
         |getHighCard(hand2)>getHighCard(hand1)=hand2
         |determineSuitValueHelper(getHighCardValue(hand1))>determineSuitValueHelper(getHighCardValue(hand2))=hand1
         |otherwise=hand2
+
+
+    tieBreakerOnePair hand1 hand2=do
+        let pair1=getOnePairValue hand1
+        let pair2=getOnePairValue hand2
+        if pair1>pair2
+            then hand1
+            else if pair1<pair2
+                then hand2
+                else if determineSuitValueHelper(pair1)>determineSuitValueHelper(pair2)
+                    then hand1
+                    else if if determineSuitValueHelper(pair1)<determineSuitValueHelper(pair2)
+                        then hand2
+                        else tieBreakerPairsHelper hand1 hand2
+
     -- HELPER FUNCTIONS --
 
     --retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
