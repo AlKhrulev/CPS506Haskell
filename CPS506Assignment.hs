@@ -88,13 +88,12 @@ module Poker where
     tieBreakerTwoPairs hand1 hand2=do
         let reducedHand1 = map (retrieveCardValue) reducedHand1
         let reducedHand2 = map (retrieveCardValue) reducedHand2
-        let pairvalues1=[1,1,1,1]
-        let pairvalues2=[1,1,1,1]
-        if (head reducedHand1)==(head tail reducedHand1) then 
-            pairvalues1=(take 4 reducedHand1) else pairvalues1=(tail reducedHand1)
-        if (head reducedHand2)==(head tail reducedHand2) then 
-            pairvalues2=(take 4 reducedHand2) else pairvalues2=(tail reducedHand2)
-        
+        let pairs1=getTwoPairValue reducedHand1
+        let pairs2=getTwoPairValue reducedHand2
+        if fst(pairs1)>fst(pairs2) then hand1 
+            else if fst(pairs1)<fst(pairs2) then hand2
+                else if snd(pairs1)>snd(pairs2) then hand1 else hand2
+
 
     -- HELPER FUNCTIONS --
 
