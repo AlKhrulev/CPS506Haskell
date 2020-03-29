@@ -86,15 +86,29 @@ module Poker where
         --determineSuitValueHelper(getHighCard(hand2))>determineSuitValueHelper(getHighCard(hand1))=hand2
     
     tieBreakerTwoPairs hand1 hand2=do
-        let reducedHand1 = map (retrieveCardValue) reducedHand1
-        let reducedHand2 = map (retrieveCardValue) reducedHand2
-        let pairs1=getTwoPairValue reducedHand1
-        let pairs2=getTwoPairValue reducedHand2
-        if fst(pairs1)>fst(pairs2) then hand1 
-            else if fst(pairs1)<fst(pairs2) then hand2
-                else if snd(pairs1)>snd(pairs2) then hand1 else hand2
+        let pairs1=getTwoPairValue hand1
+        let pairs2=getTwoPairValue hand2
+        if fst(pairs1)>fst(pairs2)
+            then hand1 
+            else if fst(pairs1)<fst(pairs2)
+                then hand2
+                else if snd(pairs1)>snd(pairs2) 
+                    then hand1 else hand2
+                    else if determineSuitValueHelper(fst pairs1)>determineSuitValueHelper(fst pairs2)
+                        then hand1
+                        else if determineSuitValueHelper(fst pairs2)>determineSuitValueHelper(fst pairs1)
+                            then hand2
+                            else if determineSuitValueHelper(snd pairs1)>determineSuitValueHelper(snd pairs2)
+                            then hand1
+                                else if determineSuitValueHelper(snd pairs2)>determineSuitValueHelper(snd pairs1)
+                                then hand2
+                                else tieBreakerTwoPairsHelper hand1 hand2
 
-
+    tieBreakerTwoPairsHelper hand1 hand2
+        |getHighCard(hand1)>getHighCard(hand2)=hand1
+        |getHighCard(hand2)>getHighCard(hand1)=hand2
+        |determineSuitValueHelper(getHighCardValue(hand1))>determineSuitValueHelper(getHighCardValue(hand2))=hand1
+        |otherwise=hand2
     -- HELPER FUNCTIONS --
 
     --retrieveCardValue::Integer->Integer --returns a card value in a range of 1-13
@@ -141,7 +155,7 @@ module Poker where
 
     -- get pair value
     getOnePairValue hand = do
-        let reducedHand = map (\x -> x `mod` 13) hand
+        let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         let zipped = zip hand frequencyHand
         let pair = filter (\x -> snd x == 2) zipped
@@ -149,7 +163,7 @@ module Poker where
 
     -- get two pair values
     getTwoPairValue hand = do
-        let reducedHand = map (\x -> x `mod` 13) hand
+        let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         let zipped = zip hand frequencyHand
         let pairs = filter (\x -> snd x == 2) zipped
@@ -157,7 +171,7 @@ module Poker where
 
     --get high card three kind
     getThreeKindValue hand = do
-        let reducedHand = map (\x -> x `mod` 13) hand
+        let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         let zipped = zip hand frequencyHand
         let trips = filter (\x -> snd x == 3) zipped
@@ -165,7 +179,7 @@ module Poker where
         
     --get high card four kind
     getFourKindValue hand = do
-        let reducedHand = map (\x -> x `mod` 13) hand
+        let reducedHand = map (retrieveCardValue) hand
         let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
         let zipped = zip hand frequencyHand
         let quads = filter (\x -> snd x == 4) zipped
