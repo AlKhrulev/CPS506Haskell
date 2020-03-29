@@ -120,9 +120,48 @@ module Poker where
                 then hand2
                 else if determineSuitValueHelper(pair1)>determineSuitValueHelper(pair2)
                     then hand1
-                    else if if determineSuitValueHelper(pair1)<determineSuitValueHelper(pair2)
+                    else if determineSuitValueHelper(pair1)<determineSuitValueHelper(pair2)
                         then hand2
                         else tieBreakerPairsHelper hand1 hand2
+
+    tieBreakerThreeofaKind hand1 hand2=do
+        let highcard1=getThreeKindValue hand1
+        let highcard2=getThreeKindValue hand2
+        if highcard1>highcard2
+            then hand1
+            else if highcard1<highcard2
+                then hand2
+                else if determineSuitValueHelper(highcard1)>determineSuitValueHelper(highcard2)
+                    then hand1
+                    else if determineSuitValueHelper(highcard1)<determineSuitValueHelper(highcard2)
+                        then hand2
+                        else tieBreakerPairsHelper hand1 hand2
+
+    tieBreakerFourofaKind hand1 hand2=do
+        let highcard1=getFourKindValue hand1
+        let highcard2=getFourKindValue hand2
+        if highcard1>highcard2
+            then hand1
+            else if highcard1<highcard2
+                then hand2
+                else if determineSuitValueHelper(highcard1)>determineSuitValueHelper(highcard2)
+                    then hand1
+                    else if determineSuitValueHelper(highcard1)<determineSuitValueHelper(highcard2)
+                        then hand2
+                        else tieBreakerPairsHelper hand1 hand2
+
+    tieBreakerFullhouse hand1 hand2=do
+        let highcard1=getThreeKindValue hand1
+        let highcard2=getThreeKindValue hand2
+        if highcard1>highcard2
+            then hand1
+            else if highcard1<highcard2
+                then hand2
+                else if determineSuitValueHelper(highcard1)>determineSuitValueHelper(highcard2)
+                    then hand1
+                    else if determineSuitValueHelper(highcard1)<determineSuitValueHelper(highcard2)
+                        then hand2
+                        else tieBreakerOnePair hand1 hand2
 
     -- HELPER FUNCTIONS --
 
