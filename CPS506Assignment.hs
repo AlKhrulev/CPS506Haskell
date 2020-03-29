@@ -98,16 +98,18 @@ module Poker where
             else if fst(pairs1)<fst(pairs2)
                 then hand2
                 else if snd(pairs1)>snd(pairs2) 
-                    then hand1 else hand2
-                    else if determineSuitValueHelper(fst pairs1)>determineSuitValueHelper(fst pairs2)
-                        then hand1
-                        else if determineSuitValueHelper(fst pairs2)>determineSuitValueHelper(fst pairs1)
-                            then hand2
-                            else if determineSuitValueHelper(snd pairs1)>determineSuitValueHelper(snd pairs2)
+                    then hand1
+                    else if snd(pairs1)<snd(pairs2)
+                        then hand2 
+                        else if determineSuitValueHelper(fst pairs1)>determineSuitValueHelper(fst pairs2)
                             then hand1
-                                else if determineSuitValueHelper(snd pairs2)>determineSuitValueHelper(snd pairs1)
+                            else if determineSuitValueHelper(fst pairs2)>determineSuitValueHelper(fst pairs1)
                                 then hand2
-                                else tieBreakerPairsHelper hand1 hand2
+                                else if determineSuitValueHelper(snd pairs1)>determineSuitValueHelper(snd pairs2)
+                                then hand1
+                                    else if determineSuitValueHelper(snd pairs2)>determineSuitValueHelper(snd pairs1)
+                                    then hand2
+                                    else tieBreakerPairsHelper hand1 hand2
 
     tieBreakerPairsHelper hand1 hand2
         |getHighCard(hand1)>getHighCard(hand2)=hand1
