@@ -128,6 +128,22 @@ module Poker where
     --returns a # of times element is present in a list
     getFrequency x list = (length.filter(== x)) list
 
+    -- get pair value
+    getOnePairValue hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let pair = filter (\x -> snd x == 2) zipped
+        fst (head pair)
+
+    -- get two pair values
+    getTwoPairValue hand = do
+        let reducedHand = map (\x -> x `mod` 13) hand
+        let frequencyHand = map (\x -> getFrequency x reducedHand) reducedHand
+        let zipped = zip hand frequencyHand
+        let pairs = filter (\x -> snd x == 2) zipped
+        (fst (head pairs), fst (last pairs))
+
     -- METHODS TO CHECK RANKING OF HAND --
 
     --getHighCard::[Integer]->Integer
